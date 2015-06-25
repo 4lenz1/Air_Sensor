@@ -1,0 +1,59 @@
+#include "handletextfield.h"
+#include <QSerialPort>
+
+/*
+ * This class handles interactions with the text field
+ */
+QSerialPort serial;
+HandleTextField::HandleTextField(QObject *parent) :
+    QObject(parent)
+{
+    mq4 , mq5 , mq9 = "";
+    serialBuffer = "";
+    qDebug () << "declear datareceie" ;
+    serial.setPortName("COM5");
+
+    serial.open(QIODevice::ReadWrite);
+    serial.setBaudRate(QSerialPort::Baud9600);
+    serial.setDataBits(QSerialPort::Data8);
+    serial.setParity(QSerialPort::NoParity);
+    serial.setStopBits(QSerialPort::OneStop);
+    serial.setFlowControl(QSerialPort::HardwareControl);
+
+
+    connect(&serial, SIGNAL(readyRead()) , this  , SLOT(getData()));
+}
+
+void HandleTextField::handleSubmitTextField(const QString &in)
+{
+    qDebug() << "c++: HandleTextField::handleSubmitTextField:" << in;
+    //emit putData(in);
+}
+void HandleTextField::getData(){
+
+
+    QStringList bufferList = serialBuffer.split(":");
+
+//    if (bufferList[0] == ""){
+//        bufferList[0] = mq4;
+//    }
+    if(bufferList.length() < 4){
+        serialData = serial.readAll();
+        if(serialData != "")
+            serialBuffer += QString::fromStdString(serialData.toStdString());
+
+    }else{
+        emit putMq4Data(bufferList[0]);
+        emit putMq5Data(bufferList[1]);
+        emit putMq9Data(bufferList[2]);
+        serialBuffer.clear();
+    }
+
+
+//    qDebug() << "Mq4: " << bufferList[0];
+//    qDebug() << "Mq5: " << bufferList[1];
+//    qDebug() << "Mq9: " << bufferList[2];
+
+
+   // qDebug() << str  ;
+}
