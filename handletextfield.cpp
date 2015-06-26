@@ -8,7 +8,7 @@ QSerialPort serial;
 HandleTextField::HandleTextField(QObject *parent) :
     QObject(parent)
 {
-    mq4 , mq5 , mq9 = "";
+    mq4 = mq5 =  mq9 = "0";
     serialBuffer = "";
     qDebug () << "declear datareceie" ;
     serial.setPortName("COM5");
@@ -33,9 +33,20 @@ void HandleTextField::getData(){
 
 
     QStringList bufferList = serialBuffer.split(":");
+    //qDebug() << bufferList;
 
-//    if (bufferList[0] == ""){
-//        bufferList[0] = mq4;
+    if (bufferList.at(0) == ""){
+    //    qDebug() <<"mq4= "<< bufferList.at(0) << "adj mq4 to" << mq4 ;
+        bufferList[0] = mq4;
+    }else{
+      //  qDebug() << "mq4 is correct :" << mq4 ;
+        mq4 = bufferList.at(0);
+    }
+//    if(bufferList[1]==""){
+//        bufferList[1] = mq5;
+//    }
+//    if(bufferList[2] ==""){
+//        bufferList[2]= mq9;
 //    }
     if(bufferList.length() < 4){
         serialData = serial.readAll();

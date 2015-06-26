@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.2
-
+import QtGraphicalEffects 1.0
 Window {
     signal submitTextField(string text)
 
@@ -10,12 +10,27 @@ Window {
         //console.log("getData: " + data)
         rectmq4.height =   data;
         if(data > 150 ){
-            rectmq4.color = "red";
+            aniAlertMq4.start();
         }else{
-            rectmq4.color = "green";
+            aniSafeMq4.start();
         }
 
         numMq4.text= data
+    }
+
+    ColorAnimation {
+        id: aniAlertMq4
+        target: rectmq4
+        duration: changeSpeed
+        easing.type: Easing.InOutQuad
+        to:"red"
+    }
+    ColorAnimation {
+        id: aniSafeMq4
+        target: rectmq4
+        duration: changeSpeed
+        easing.type: Easing.InOutQuad
+        to: "green"
     }
     function getSensorMq5Data(data){
         // console.log("getData: " + data)
@@ -40,12 +55,14 @@ Window {
 
 
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
+    property int changeSpeed: 2000
     Item{
         id:mainItem
         width: parent.width
         height: parent.height
+
 
         Rectangle{
             id:frame
@@ -54,6 +71,15 @@ Window {
             //width: parent.width / 5 * 4
             width : parent.width
             color : "black"
+            Text{
+                id : title
+                text:"Sensor on Arduino "
+                color : "yellow"
+                font.family: "NEOTERIC"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top:  parent.top
+                font.pixelSize: 40
+            }
 
             Rectangle{
                 id : warn
@@ -62,10 +88,18 @@ Window {
                 anchors.bottomMargin: 150
                 width:  parent.width
                 color : "red"
+                RectangularGlow {
+                    id: effectWarn
+                    anchors.fill: parent
+                    glowRadius: 25
+                    spread: 0
+                    color: parent.color
+                    cornerRadius: parent.radius + glowRadius
+                }
 
                 SequentialAnimation{
-                        running : true
-                        loops:Animation.Infinite
+                    running : true
+                    loops:Animation.Infinite
                     NumberAnimation {
                         target: warn
                         property: "opacity"
@@ -90,8 +124,10 @@ Window {
                 text:"Methane\nand\nCNG Gas"
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.bottom
-                anchors.left:  parent.left
+                // anchors.left:  parent.left
+                anchors.horizontalCenter: rectmq4.horizontalCenter
                 color : "white"
+                font.family: "NEOTERIC"
                 font.pixelSize: 20
             }
             Text{
@@ -101,7 +137,7 @@ Window {
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: 20
-
+                font.family: "NEOTERIC"
                 color : "white"
             }
             Text{
@@ -109,7 +145,8 @@ Window {
                 text:" Carbon Monoxide\nand\nflammable gasses"
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.bottom
-                anchors.right:  parent.right
+                anchors.horizontalCenter: rectmq9.horizontalCenter
+                font.family: "NEOTERIC"
                 color : "white"
                 font.pixelSize: 20
             }
@@ -122,24 +159,35 @@ Window {
                 //anchors.horizontalCenter: txtMq9.horizontalCenter
                 anchors.bottom:  txtMq9.top
                 width: parent.width / 5;
-                height :  parent.height / 4;
+                height :  parent.height
                 radius : 3
 
                 Behavior  on height {
                     NumberAnimation{
-                        duration: 500
+                        duration: changeSpeed
                         easing.type:  Easing.OutCubic;
                     }// end NumberAnimation
                 } // end Behavior
-                Text{
-                    id : numMq9
-                    text:""
-                    color : "black"
-                    font.pixelSize: 24
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter:  parent.horizontalCenter
+
+                RectangularGlow {
+                    id: effectmq9
+                    height: mainItem.height
+                    anchors.fill: parent
+                    glowRadius: 10
+                    spread: 0.2
+                    color: parent.color
+                    cornerRadius: parent.radius + glowRadius
+                    Text{
+                        id : numMq9
+                        text:""
+                        color : "black"
+                        font.pixelSize: 24
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter:  parent.horizontalCenter
+                    }
                 }
             }
+
             Rectangle{
                 id : rectmq5
                 color : "Blue"
@@ -147,21 +195,30 @@ Window {
                 anchors.horizontalCenter: txtMq5.horizontalCenter
                 anchors.bottom: txtMq5.top
                 width: parent.width / 5
-                height :  parent.height / 3
+                height :  parent.height
                 radius: 3
                 Behavior  on height {
                     NumberAnimation{
-                        duration: 500
+                        duration: changeSpeed
                         easing.type:  Easing.OutCubic;
                     }// end NumberAnimation
                 } // end Behavior
-                Text{
-                    id : numMq5
-                    text:""
-                    color : "black"
-                    font.pixelSize: 24
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter:  parent.horizontalCenter
+
+                RectangularGlow {
+                    id: effectmq5
+                    anchors.fill: parent
+                    glowRadius: 10
+                    spread: 0.2
+                    color: parent.color
+                    cornerRadius: parent.radius + glowRadius
+                    Text{
+                        id : numMq5
+                        text:""
+                        color : "black"
+                        font.pixelSize: 24
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter:  parent.horizontalCenter
+                    }
                 }
             }
             Rectangle{
@@ -171,23 +228,32 @@ Window {
                 anchors.left:  parent.left
                 anchors.bottom: txtMq4.top
                 width:  parent.width / 5
-                height:  parent.height / 2
+                height:  parent.height
                 radius:  4
 
                 Behavior on height {
                     NumberAnimation{
-                        duration: 500
+                        duration: changeSpeed
                         easing.type: Easing.OutCubic
                     }
                 }
 
-                Text{
-                    id : numMq4
-                    text:""
-                    color : "black"
-                    font.pixelSize: 24
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter:  parent.horizontalCenter
+
+                RectangularGlow {
+                    id: effectmq4
+                    anchors.fill: parent
+                    glowRadius: 25
+                    spread: 0
+                    color: parent.color
+                    cornerRadius: parent.radius + glowRadius
+                    Text{
+                        id : numMq4
+                        text:""
+                        color : "black"
+                        font.pixelSize: 24
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter:  parent.horizontalCenter
+                    }
                 }
             }
 
