@@ -177,6 +177,7 @@ Window {
                     spread: 0.2
                     color: parent.color
                     cornerRadius: parent.radius + glowRadius
+
                     Text{
                         id : numMq9
                         text:""
